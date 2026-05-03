@@ -63,6 +63,7 @@ pipeline {
                     withCredentials([file(credentialsId: 'almafrtk-225-sp26', variable: 'KUBECONFIG_FILE')]) {
                     sh '''
                     export KUBECONFIG=$KUBECONFIG_FILE
+                    sed -i "s|${DOCKER_IMAGE}:latest|${DOCKER_IMAGE}:${IMAGE_TAG}|"
                     kubectl apply -f deployment-dev.yaml
                    '''
                 }
@@ -73,7 +74,11 @@ pipeline {
         stage('Check Kubernetes Cluster') {
             steps {
                 script {
-                    sh "kubectl get all"
+                    withCredentials([file(credentialsId: 'almafrtk-225-sp26', variable: 'KUBECONFIG_FILE')]) {
+                        sh '''
+                        export KUBECONFIG=$KUBECONFIG_FILE
+                        kubectl get all
+                        '''
                 }
             }
         }
