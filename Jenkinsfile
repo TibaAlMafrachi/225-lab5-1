@@ -60,29 +60,25 @@ pipeline {
         stage('Deploy to Dev Environment') {
             steps {
                 script {
-                    withCredentials([file(credentialsId: 'almafrtk-225-sp26', variable: 'KUBECONFIG_FILE')]) {
-                    sh '''
-                    export KUBECONFIG=$KUBECONFIG_FILE
-                    sed -i "s|${DOCKER_IMAGE}:latest|${DOCKER_IMAGE}:${IMAGE_TAG}|"
-                    kubectl apply -f deployment-dev.yaml
-                   '''
+                    // This sets up the Kubernetes configuration using the specified KUBECONFIG
+                    def kubeConfig = readFile(KUBECONFIG)
+                    // This updates the deployment-dev.yaml to use the new image tag
+                    sh "sed -i 's|${DOCKER_IMAGE}:latest|${DOCKER_IMAGE}:${IMAGE_TAG}|' deployment-dev.yaml"
+                   // sh 'kubectl apply -f pv-claim.yaml'
+                   sh "kubectl apply -f deployment-dev.yaml"
                 }
             }
         }
-      }      
         
         stage('Check Kubernetes Cluster') {
             steps {
                 script {
-                    withCredentials([file(credentialsId: 'almafrtk-225-sp26', variable: 'KUBECONFIG_FILE')]) {
-                        sh '''
-                        export KUBECONFIG=$KUBECONFIG_FILE
-                        kubectl get all
-                        '''
+                    sh "kubectl get all"
                 }
             }
         }
     }
+
 
     post {
 
