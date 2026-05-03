@@ -1,4 +1,4 @@
-225-lab3-9
+225-lab5-1
 This is a simple flask/sqlite3 app without persistence. We will demonstrate pod behavior with this pipeline in class. Deploys to your LoadBalanced IP on port 5000.
 
 Fork this repository into your GitHub abbount.
